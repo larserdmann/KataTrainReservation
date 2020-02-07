@@ -1,0 +1,30 @@
+{
+	"info": {
+		"_postman_id": "21e1cd08-de5a-4a1c-bf5e-46c9da808cfe",
+		"name": "data_for_train",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "data_for_train (express 2000)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8091/data_for_train/express_2000",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8091",
+					"path": [
+						"data_for_train",
+						"express_2000"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
