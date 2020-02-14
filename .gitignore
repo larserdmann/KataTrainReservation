@@ -1,3 +1,4 @@
+/.idea/
 train/*
 trains/*
 *.pyc

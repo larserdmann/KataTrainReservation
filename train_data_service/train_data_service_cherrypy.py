@@ -11,5 +11,6 @@ def start(trains_data):
     TrainDataService.reserve.exposed = True
     TrainDataService.reset.exposed = True
     cherrypy.config.update({"server.socket_port" : 8091})
+    cherrypy.server.socket_host = '0.0.0.0'
     cherrypy.quickstart(TrainDataService(trains_data))
     
