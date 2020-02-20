@@ -31,6 +31,6 @@ def start(trains_data):
     global TRAIN_DATA
     TRAIN_DATA = TrainDataService(trains_data)
 
-    app.config["SERVER_NAME"] = "127.0.0.1:8081"
+    app.config["SERVER_NAME"] = "0.0.0.0:8081"
     app.config["DEBUG"] = True
     app.run()
