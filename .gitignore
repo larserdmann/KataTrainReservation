@@ -3,3 +3,4 @@ train/*
 trains/*
 *.pyc
 
+venv/*
