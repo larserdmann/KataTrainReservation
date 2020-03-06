@@ -1,3 +1,4 @@
+package train;
 
 public class Seat {
     public final String coach;

@@ -1,3 +1,4 @@
+package train;
 
 public class ReservationRequest {
 	public final String trainId;

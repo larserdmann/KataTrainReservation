@@ -1,5 +1,4 @@
-import train.TrainData;
-import train.TrainDataParser;
+package train;
 
 import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
@@ -8,7 +7,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.util.List;
-import java.util.Set;
 
 public class TicketOffice {
 
