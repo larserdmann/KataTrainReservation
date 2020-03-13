@@ -28,6 +28,10 @@ public class TicketOfficeTest implements TestingFileUtils {
     WireMockServer trainDataServer = with(wireMockConfig().dynamicPort());
     @Mock
     TrainDataParser trainDataParser;
+    @Mock
+    TrainData trainData;
+    @Mock
+    ReservationService reservationService;
 
     private String bookingRefBaseUrl;
     private String trainDataBaseUrl;
@@ -41,13 +45,13 @@ public class TicketOfficeTest implements TestingFileUtils {
         bookingRefServer.givenThat(get("/booking_reference").willReturn(ok(expectedBookingId)));
         trainDataServer.givenThat(get("/data_for_train/express_2000").willReturn(okJson(json)));
 
-        given(trainDataParser.parse(any())).willReturn(new TrainData());
+        given(trainDataParser.parse(any())).willReturn(trainData);
 
         bookingRefBaseUrl = bookingRefServer.baseUrl();
         trainDataBaseUrl = trainDataServer.baseUrl();
 
         ReservationRequest request = new ReservationRequest("express_2000", 123);
-        TicketOffice ticketOffice = new TicketOffice(bookingRefBaseUrl, trainDataBaseUrl, trainDataParser);
+        TicketOffice ticketOffice = new TicketOffice(bookingRefBaseUrl, trainDataBaseUrl, trainDataParser, reservationService);
 
 
         Reservation reservation = ticketOffice.makeReservation(request);

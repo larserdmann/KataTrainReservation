@@ -13,11 +13,13 @@ public class TicketOffice {
     private String bookingRefBaseUrl;
     private String trainDataBaseUrl;
     private TrainDataParser trainDataParser;
+    private ReservationService reservationService;
 
-    public TicketOffice(String baseUrl, String trainDataBaseUrl, TrainDataParser trainDataParser) {
+    public TicketOffice(String baseUrl, String trainDataBaseUrl, TrainDataParser trainDataParser, ReservationService reservationService) {
         this.bookingRefBaseUrl = baseUrl;
         this.trainDataBaseUrl = trainDataBaseUrl;
         this.trainDataParser = trainDataParser;
+        this.reservationService = reservationService;
     }
 
     public Reservation makeReservation(ReservationRequest request) {
@@ -32,9 +34,14 @@ public class TicketOffice {
 
         TrainData trainData = trainDataParser.parse(json);
 
-        List<Seat> seats = null;
+        // business logic (70% ... )
+        List<Seat> seats = reservationService.tryToReserve(request, trainData);
 
-        return new Reservation(request.trainId, seats, bookingId);
+        // POST req.
+        Reservation reservation = new Reservation(request.trainId, seats, bookingId);
+
+
+        return reservation;
     }
 
     private String createBookingId() {
