@@ -1,6 +1,7 @@
 package train;
 
 import helper.TestingFileUtils;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import javax.json.Json;
@@ -11,9 +12,11 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DisplayName("TrainDataParser")
 class TrainDataParserTest implements TestingFileUtils {
 
     @Test
+    @DisplayName("can parse train data from pseudo json.")
     public void parseTrainData() {
 
         // Arrange
@@ -29,8 +32,8 @@ class TrainDataParserTest implements TestingFileUtils {
         assertNotNull(trainData);
         assertThat(seats).hasSize(2);
 
-        assertThat(seats).anyMatch(s -> s.seatNumber == 1 && s.coach.equals("A") && "".equals(s.bookingReference));
-        assertThat(seats).anyMatch(s -> s.seatNumber == 2 && s.coach.equals("A") && "".equals(s.bookingReference));
+        assertThat(seats).anyMatch(s -> s.seatNumber == 1 && s.coach.equals("A") && s.bookingReference == null);
+        assertThat(seats).anyMatch(s -> s.seatNumber == 2 && s.coach.equals("A") && s.bookingReference == null);
     }
 
 

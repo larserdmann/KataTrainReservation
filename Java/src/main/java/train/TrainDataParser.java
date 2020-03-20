@@ -17,12 +17,16 @@ public class TrainDataParser {
 
             String coach = seatJson.getString("coach");
             int seatNumber = Integer.parseInt(seatJson.getString("seat_number"));
-            String bookingReference = seatJson.getString("booking_reference");
+            String bookingReference = trimToNull(seatJson.getString("booking_reference"));
 
             seats.add(new Seat(coach, seatNumber, bookingReference));
         }
 
         return new TrainData(seats);
+    }
+
+    private String trimToNull(final String reference) {
+        return reference != null && reference.isEmpty() ? null : reference;
     }
 
 }

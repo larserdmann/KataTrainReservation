@@ -17,7 +17,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-@DisplayName("WireMockExtension usage")
+@DisplayName("TicketOffice")
 @ExtendWith(WireMockExtension.class)
 @ExtendWith(MockitoExtension.class)
 public class TicketOfficeTest implements TestingFileUtils {
@@ -37,6 +37,7 @@ public class TicketOfficeTest implements TestingFileUtils {
     private String trainDataBaseUrl;
 
     @Test
+    @DisplayName("can reserve seats.")
     public void reserveSeats() {
 
         String expectedBookingId = "75bcd15";
