@@ -1,21 +1,22 @@
 package train;
 
-import static java.util.Collections.emptyList;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReservationService {
     // result in list of free seats
-    public List<Seat> tryToReserve(final ReservationRequest request, final TrainData trainData) {
+    public List<Seat> tryToReserve(final ReservationRequest request, final TrainData trainData, String bookingReference) {
         List<Seat> seatsToReserve = new ArrayList<>();
 
         for (int i = 0; i < request.seatCount; i++) {
             for (Seat seat : trainData.getSeats()) {
-                seatsToReserve.add(seat);
-                break;
-            }
 
+                if(seat.isFree()) {
+                    seatsToReserve.add(seat);
+                    seat.bookingReference = bookingReference;
+                    break;
+                }
+            }
         }
 
         return seatsToReserve;

@@ -12,7 +12,11 @@ public class Seat {
     }
 
     public boolean equals(Object o) {
-        Seat other = (Seat)o;
-        return coach==other.coach && seatNumber==other.seatNumber;
+        Seat other = (Seat) o;
+        return coach == other.coach && seatNumber == other.seatNumber;
+    }
+
+    public boolean isFree() {
+        return bookingReference == null;
     }
 }
