@@ -24,7 +24,7 @@ public class TicketOffice {
 
     public Reservation makeReservation(ReservationRequest request) {
 
-        String bookingId = createBookingId();
+        String bookingReference = createBookingReference();
 
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(UriBuilder.fromUri(trainDataBaseUrl).path("data_for_train").path(request.trainId));
@@ -35,16 +35,16 @@ public class TicketOffice {
         TrainData trainData = trainDataParser.parse(json);
 
         // business logic (70% ... )
-        List<Seat> seats = reservationService.tryToReserve(request, trainData);
+        List<Seat> seats = reservationService.tryToReserve(request, trainData, bookingReference);
 
         // POST req.
-        Reservation reservation = new Reservation(request.trainId, seats, bookingId);
+        Reservation reservation = new Reservation(request.trainId, seats, bookingReference);
 
 
         return reservation;
     }
 
-    private String createBookingId() {
+    private String createBookingReference() {
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(UriBuilder.fromUri(bookingRefBaseUrl).path("booking_reference"));
 
