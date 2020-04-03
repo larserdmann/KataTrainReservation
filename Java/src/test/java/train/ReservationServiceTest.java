@@ -2,6 +2,7 @@ package train;
 
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -70,7 +71,6 @@ class ReservationServiceTest {
 
         // then
         Condition<Seat> condition = new Condition<>(freeSeats::contains, "free seats contains ...");
-
         assertThat(reservedSeats).hasSize(2);
         assertThat(reservedSeats.get(0)).has(condition);
         assertThat(reservedSeats.get(1)).has(condition);
@@ -82,8 +82,55 @@ class ReservationServiceTest {
                 .has(new Condition<>(seats -> new HashSet<>(seats).size() == seats.size(), "some other desc."));
     }
 
-    @Test
-    @DisplayName("")
-    void requestWithThreeSeatsInTwoCoaches() {
+    @Test @DisplayName("request with one seats and one seat is already reserved")
+    void requestWithOneSeatsAndOneSeatIsAlreadyReserved() {
+        // given
+        final ReservationRequest request = new ReservationRequest("RB-123", 1);
+
+        final Seat alreadyReservedSeat = new Seat("A", 0, "AFFE00");
+        final Seat freeSeatOne = new Seat("A", 1, null);
+        final Seat freeSeatTwo = new Seat("A", 2, null);
+
+        final TrainData trainData = new TrainData(asList(alreadyReservedSeat, freeSeatOne, freeSeatTwo));
+
+        // when
+        final List<Seat> reservedSeats = reservationService.tryToReserve(request, trainData, "AFFE01");
+
+        // then
+        assertThat(reservedSeats).hasSize(1);
+        assertThat(reservedSeats.get(0)).isIn(freeSeatOne, freeSeatTwo);
+
     }
+
+
+
+    @Nested @DisplayName("failing request")
+    class FailingRequest {
+
+        @Nested @DisplayName("because of 70 % train limitation")
+        class TrainLimitation {
+
+            @Test @DisplayName("with two seats in four-seated train with three free seats.")
+            void withTwoSeatsAndOneAlreadyReservedSeat() {
+                // given
+                final ReservationRequest request = new ReservationRequest("RB-123", 2);
+
+                final Seat alreadyReservedSeat = new Seat("A", 0, "AFFE00");
+                final Seat freeSeatOne = new Seat("A", 1, null);
+                final Seat freeSeatTwo = new Seat("A", 2, null);
+                final Seat freeSeatThree = new Seat("A", 3, null);
+
+                final TrainData trainData = new TrainData(asList(alreadyReservedSeat, freeSeatOne, freeSeatTwo, freeSeatThree));
+
+                // when
+                final List<Seat> reservedSeats = reservationService.tryToReserve(request, trainData, "AFFE01");
+
+                // then
+                assertThat(reservedSeats).isEmpty();
+            }
+
+        }
+
+    }
+
 }

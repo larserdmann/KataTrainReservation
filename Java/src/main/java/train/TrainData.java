@@ -13,4 +13,12 @@ public class TrainData {
     public List<Seat> getSeats() {
         return seats;
     }
+
+	public int getReservedSeatCount() {
+		return getTotalSeatCount() - (int) seats.stream().filter(Seat::isFree).count();
+	}
+
+	public int getTotalSeatCount() {
+		return seats.size();
+	}
 }
