@@ -19,4 +19,13 @@ public class Seat {
     public boolean isFree() {
         return bookingReference == null;
     }
+
+    @Override
+    public String toString() {
+        return "Seat{" +
+                "coach='" + coach + '\'' +
+                ", seatNumber=" + seatNumber +
+                ", bookingReference='" + bookingReference + '\'' +
+                '}';
+    }
 }

@@ -102,7 +102,31 @@ class ReservationServiceTest {
 
     }
 
+    @Test @DisplayName("one reservation have to be in the same coach")
+    void oneReservationHaveToBeInTheSameCoach() {
+    	// given
+        final ReservationRequest request = new ReservationRequest("RB-123", 2);
 
+        final Seat coachOneSeatOne = new Seat("A", 0, "AFFE00");
+        final Seat coachOneSeatTwo = new Seat("A", 1, "AFFE00");
+        final Seat coachOneSeatThree = new Seat("A", 2, null);
+
+        final Seat coachTwoSeatOne = new Seat("B", 0, null);
+        final Seat coachTwoSeatTwo = new Seat("B", 1, null);
+        final Seat coachTwoSeatThree = new Seat("B", 2, null);
+
+        final TrainData trainData = new TrainData(asList(coachOneSeatOne, coachOneSeatTwo, coachOneSeatThree,
+                coachTwoSeatOne, coachTwoSeatTwo, coachTwoSeatThree));
+
+    	// when
+        final List<Seat> reservedSeats = reservationService.tryToReserve(request, trainData, "AFFE01");
+
+    	// then
+        assertThat(reservedSeats).hasSize(2);
+        assertThat(reservedSeats.get(0)).isIn(coachTwoSeatOne, coachTwoSeatTwo, coachTwoSeatThree);
+        assertThat(reservedSeats.get(1)).isIn(coachTwoSeatOne, coachTwoSeatTwo, coachTwoSeatThree);
+        assertThat(reservedSeats.get(0)).isNotEqualTo(reservedSeats.get(1));
+    }
 
     @Nested @DisplayName("failing request")
     class FailingRequest {
