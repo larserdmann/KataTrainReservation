@@ -8,8 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -107,24 +109,19 @@ class ReservationServiceTest {
     	// given
         final ReservationRequest request = new ReservationRequest("RB-123", 2);
 
-        final Seat coachOneSeatOne = new Seat("A", 0, "AFFE00");
-        final Seat coachOneSeatTwo = new Seat("A", 1, "AFFE00");
-        final Seat coachOneSeatThree = new Seat("A", 2, null);
+        final TrainData trainData = TrainDataBuilder.addFirstCoach().addReservedSeats(2).addFreeSeat()
+                .addCoach().addFreeSeats(3)
+                .build();
 
-        final Seat coachTwoSeatOne = new Seat("B", 0, null);
-        final Seat coachTwoSeatTwo = new Seat("B", 1, null);
-        final Seat coachTwoSeatThree = new Seat("B", 2, null);
-
-        final TrainData trainData = new TrainData(asList(coachOneSeatOne, coachOneSeatTwo, coachOneSeatThree,
-                coachTwoSeatOne, coachTwoSeatTwo, coachTwoSeatThree));
-
-    	// when
+        // when
         final List<Seat> reservedSeats = reservationService.tryToReserve(request, trainData, "AFFE01");
 
     	// then
+        List<Seat> coachTwoSeats = trainData.getSeats(3,4,5);
+
         assertThat(reservedSeats).hasSize(2);
-        assertThat(reservedSeats.get(0)).isIn(coachTwoSeatOne, coachTwoSeatTwo, coachTwoSeatThree);
-        assertThat(reservedSeats.get(1)).isIn(coachTwoSeatOne, coachTwoSeatTwo, coachTwoSeatThree);
+        assertThat(reservedSeats.get(0)).isIn(coachTwoSeats);
+        assertThat(reservedSeats.get(1)).isIn(coachTwoSeats);
         assertThat(reservedSeats.get(0)).isNotEqualTo(reservedSeats.get(1));
     }
 
@@ -157,4 +154,53 @@ class ReservationServiceTest {
 
     }
 
+    private static class TrainDataBuilder{
+
+        final List<Seat> seats;
+
+        int nextSeatNumber;
+        char nextCoachNumber;
+
+        private TrainDataBuilder() {
+            seats = new ArrayList<>();
+            nextSeatNumber = 0;
+            nextCoachNumber = 'A';
+        }
+
+        public static TrainDataBuilder addFirstCoach() {
+            return  new TrainDataBuilder();
+        }
+
+        public TrainDataBuilder addCoach() {
+            nextCoachNumber++;
+            return this;
+        }
+
+        public TrainDataBuilder addFreeSeat() {
+            seats.add(new Seat(String.valueOf(nextCoachNumber), nextSeatNumber, null));
+            nextSeatNumber++;
+            return this;
+        }
+
+        public TrainDataBuilder addFreeSeats(final int n) {
+            IntStream.range(0,n).forEachOrdered(i -> addFreeSeat());
+            return this;
+        }
+
+        public TrainDataBuilder addReservedSeat() {
+            seats.add(new Seat(String.valueOf(nextCoachNumber), nextSeatNumber, "AFFE01"));
+            nextSeatNumber++;
+            return this;
+        }
+
+        public TrainDataBuilder addReservedSeats(final int n) {
+            IntStream.range(0,n).forEachOrdered(i -> addReservedSeat());
+            return this;
+        }
+
+        public TrainData build() {
+            return new TrainData(seats);
+        }
+
+    }
 }
