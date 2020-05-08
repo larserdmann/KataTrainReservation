@@ -125,6 +125,58 @@ class ReservationServiceTest {
         assertThat(reservedSeats.get(0)).isNotEqualTo(reservedSeats.get(1));
     }
 
+    @Nested @DisplayName("soft limit")
+    class SoftLimit{
+
+        @Test @DisplayName("can be exceeded.")
+        void canBeExceeded() {
+            // given
+            final ReservationRequest request = new ReservationRequest("RB-123", 2);
+
+            // train [2, 1, 1]
+            final TrainData trainData = TrainDataBuilder.addFirstCoach().addFreeSeats(2)
+                    .addCoach().addFreeSeat()
+                    .addCoach().addFreeSeat()
+                    .build();
+
+            // when
+            final List<Seat> reservedSeats = reservationService.tryToReserve(request, trainData, "AFFE01");
+
+            // then
+            List<Seat> coachOneSeats = trainData.getSeats(0,1);
+
+            assertThat(reservedSeats).hasSize(2);
+            assertThat(reservedSeats.get(0)).isIn(coachOneSeats);
+            assertThat(reservedSeats.get(1)).isIn(coachOneSeats);
+            assertThat(reservedSeats.get(0)).isNotEqualTo(reservedSeats.get(1));
+        }
+
+        @Test @DisplayName("can be fulfilled.")
+        void canBeFulfilled() {
+        	// given
+            final ReservationRequest request = new ReservationRequest("RB-123", 2);
+
+            // train: do[0,0] [0,0,0,0] -> do[0,0] [1,1,0,0]
+            final TrainData trainData = TrainDataBuilder.addFirstCoach().addFreeSeats(2)
+                    .addCoach().addFreeSeats(4)
+                    .build();
+
+        	// when
+            final List<Seat> reservedSeats = reservationService.tryToReserve(request, trainData, "AFFE01");
+
+            // then
+            List<Seat> coachTwoSeats = trainData.getSeats(2,3);
+
+            assertThat(reservedSeats).hasSize(2);
+            assertThat(reservedSeats.get(0)).isIn(coachTwoSeats);
+            assertThat(reservedSeats.get(1)).isIn(coachTwoSeats);
+            assertThat(reservedSeats.get(0)).isNotEqualTo(reservedSeats.get(1));
+        }
+
+
+    }
+
+
     @Nested @DisplayName("failing request")
     class FailingRequest {
 
@@ -152,6 +204,23 @@ class ReservationServiceTest {
 
         }
 
+        @Test @DisplayName("reservation in full train")
+        void reservationInFullTrain() {
+        	// given
+            final ReservationRequest request = new ReservationRequest("RB-123", 1);
+
+            // train: do[1][0][0]
+            final TrainData trainData = TrainDataBuilder.addFirstCoach().addReservedSeat()
+                    .addCoach().addFreeSeat()
+                    .addCoach().addFreeSeat()
+                    .build();
+
+        	// when
+            final List<Seat> reservedSeats = reservationService.tryToReserve(request, trainData, "AFFE01");
+
+        	// then
+
+        }
     }
 
     private static class TrainDataBuilder{

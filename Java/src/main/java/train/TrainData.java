@@ -30,6 +30,6 @@ public class TrainData {
 	}
 
 	public List<Seat> getSeats(final int... indices) {
-		return Arrays.stream(indices).boxed().map(this::getSeat).collect(toList());
+		return Arrays.stream(indices).boxed().parallel().map(this::getSeat).collect(toList());
     }
 }
